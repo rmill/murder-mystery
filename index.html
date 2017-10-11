@@ -1,11 +1,27 @@
 <html>
 <head>
-  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="index.css"></link>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="index.js"></script>
 </head>
 <body>
-  <button>Test</button>
-  <script>
-    $('button').click(function() { $.post('/test') });
-  </script>
+  <div class="container">
+    <button id="lights-off">LIGHTS OFF</button>
+    <button id="lights-on">LIGHT ON</button>
+  </div>
+  <div class="container">
+    <button id="murder">MURDER</button>
+  </div>
+  <div class="container">
+    <button id="party">YES</button>
+    <button id="party">NO</button>
+    <button id="party">ANGRY</button>
+  </div>
+  <div class="container">
+    <button id="party">PURPLE PULSE</button>
+  </div>
+  <div class="container">
+    <button id="party">PARTY!</button>
+  </div>
 </body>
 </html>
