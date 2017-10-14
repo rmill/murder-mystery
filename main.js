@@ -150,7 +150,6 @@ function lightsOff(group, duration = 0) {
 
 function playSound(file) {
   // return new Promise((resolve) => { console.log('playSound', file); resolve() })
-  console.log(__dirname + `/assets/${file}`)
   return new Promise((resolve, error, onCancel) => {
     const audio = player.play(__dirname + `/assets/${file}`, () => resolve())
     onCancel(() => audio.kill())
@@ -171,23 +170,23 @@ function random(group, color) {
 
   const promise = new Promise.resolve()
   return promise.then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
-        .delay(100).then(() => request({ method: 'PUT', uri, json }))
-        .delay(100).then(() => random(group, color))
+        .delay(50).then(() => request({ method: 'PUT', uri, json }))
+        .delay(50).then(() => random(group, color))
 }
 
 function blink(group, light, times, color) {
   if (times === 0) {
-    return promise.resolve()
+    return Promise.resolve()
   }
 
   const colorJson = getColor(color);
   const json = Object.assign({ on: true, transitiontime: 0 }, colorJson);
-  const uri = groups[light];
+  const uri = groups[group][light];
 
   const promise = new Promise.resolve()
-  return promise.then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
-        .delay(100).then(() => request({ method: 'PUT', uri, json }))
-        .delay(100).then(() => blink(group, light, times--, color))
+  return promise.then(() => request({ method: 'PUT', uri, json }))
+        .delay(150).then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
+        .delay(150).then(() => blink(group, light, times - 1, color))
 }
 
 function getColor(color) {
