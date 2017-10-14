@@ -25,10 +25,50 @@ app.listen(3000, () => {
   console.log('Example app listening on port 3000!')
 })
 
-const ip = '192.168.0.136'
-const user = 'q5L1lMNztxiKWGQurDZ-hHuyGQ0IAKu42wRoQep6'
-const groupUri = `http://${ip}/api/${user}/groups`
-const lightUri = `http://${ip}/api/${user}/lights`
+const groups = {
+  all: [
+    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/4/state',
+    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/6/state',
+    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/3/state',
+    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/5/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/1/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/3/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/2/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/5/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/4/state',
+    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/1/state',
+    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/2/state',
+    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/1/state',
+    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/2/state',
+    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/3/state'
+  ],
+  living_room: [
+    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/4/state',
+    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/6/state',
+    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/3/state'
+  ],
+  hallway: [
+    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/5/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/1/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/5/state'
+  ],
+  party: [
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/2/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/3/state',
+    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/4/state',
+    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/1/state'
+  ],
+  storage_room: [
+    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/2/state'
+  ],
+  kitchen: [
+    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/1/state',
+    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/2/state'
+  ],
+  study: [
+    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/3/state'
+  ]
+}
 
 function playScene(scene) {
   const promise = new Promise.resolve()
@@ -68,15 +108,15 @@ function getActionCall(name) {
 
 function fadeColor(group, duration, color) {
   // return new Promise((resolve) => { console.log('fadeColor') })
-  // const uri = `${groupUri}/${group}/action`
-  // const uri = `${lightUri}/${group}/state`
   const colorJson = getColor(color);
   const json = Object.assign({ on: true, transitiontime: duration }, colorJson);
-  return Promise.all([
-    request({ method: 'PUT', uri: `${lightUri}/2/state`, json }),
-    request({ method: 'PUT', uri: `${lightUri}/3/state`, json }),
-    request({ method: 'PUT', uri: `${lightUri}/4/state`, json })
-  ]);
+
+  const requests = []
+  for (let light of groups[group]) {
+    requests.push(request({ method: 'PUT', uri: light, json }))
+  }
+
+  return Promise.all(requests);
 }
 
 function heartbeat(group, color) {
@@ -102,14 +142,14 @@ function lightsOn(group, duration = 0, color = 'default') {
 
 function lightsOff(group, duration = 0) {
   // return new Promise((resolve) => { console.log('lightsOff', group, duration); resolve() })
-  // const uri = `${groupUri}/${group}/action`
-  const uri = `${lightUri}/${group}/state`
   const json = { "on": false, "transitiontime": duration }
-  return Promise.all([
-    request({ method: 'PUT', uri: `${lightUri}/2/state`, json }).catch((e) => console.log(e)),
-    request({ method: 'PUT', uri: `${lightUri}/3/state`, json }).catch((e) => console.log(e)),
-    request({ method: 'PUT', uri: `${lightUri}/4/state`, json }).catch((e) => console.log(e))
-  ])
+
+  const requests = []
+  for (let light of groups[group]) {
+    requests.push(request({ method: 'PUT', uri: light, json }))
+  }
+
+  return Promise.all(requests)
 }
 
 function playSound(file) {
@@ -124,8 +164,9 @@ function playSound(file) {
 function getColor(color) {
   switch (color) {
     case 'default':
-    case 'white': return { hue: 0, sat: 0, bri: 150 };
+    case 'white': return { hue: 0, sat: 0, bri: 150 }
     case 'black': return { on: false }
-    case 'red': return { hue: 65000, sat: 255, bri: 150 };
+    case 'red': return { hue: 65000, sat: 255, bri: 150 }
+    case 'green': return { hue: 20000, sat: 255, bri: 150 }
   }
 }

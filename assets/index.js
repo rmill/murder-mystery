@@ -1,27 +1,35 @@
 window.onload = function () {
   events = {
     'lights-off': {
-      0: { actions: [ {name: 'lights-off', options: [0]} ] }
+      0: { actions: [ {name: 'lights-off', options: ['all']} ] }
     },
     'lights-on': {
-      0: { actions: [ {name: 'lights-on', options: [0]} ] }
+      0: { actions: [ {name: 'lights-on', options: ['all']} ] }
     },
     'murder': {
       0: {
-        actions: [{name: 'lights-off', options: [0]}]
+        actions: [{name: 'lights-off', options: ['all']}]
       },
       3000: {
         id: 1,
         actions: [
           {name: 'play-sound', options: ['heartbeat.wav']},
-          {name: 'heartbeat', options: [2, 'red']}
+          {name: 'heartbeat', options: ['all', 'red']}
         ]
       },
       20000: {
         actions: [
           {name: 'kill', options: [1]},
-          {name: 'lights-on', options: [2]}
+          {name: 'lights-on', options: ['all']}
         ]
+      }
+    },
+    'yes': {
+      0: {
+        actions: [{name: 'fade-color', options: ['all', 5, 'green']}]
+      },
+      400: {
+        actions: [{name: 'fade-color', options: ['all', 5, 'default']}]
       }
     }
   };
