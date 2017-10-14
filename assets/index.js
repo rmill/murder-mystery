@@ -31,6 +31,13 @@ window.onload = function () {
       400: {
         actions: [{name: 'fade-color', options: ['all', 5, 'default']}]
       }
+    },
+    "purple-pulse": {
+      0: {
+        actions: [
+          {name: 'pulse', options: ['kitchen', 1500, 'purple']}
+        ]
+      }
     }
   };
 

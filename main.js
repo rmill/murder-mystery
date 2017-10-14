@@ -102,6 +102,7 @@ function getActionCall(name) {
     case 'lights-on': return lightsOn
     case 'lights-off': return lightsOff
     case 'play-sound': return playSound
+    case 'pulse': return pulse
     default: throw `unknown action type "${name}"`
   }
 }
@@ -161,12 +162,20 @@ function playSound(file) {
   })
 }
 
+function pulse(group, duration, color) {
+  const promise = new Promise.resolve()
+  return promise.then(() => fadeColor(group, duration / 100, color))
+         .delay(duration).then(() => fadeColor(group, duration / 100, 'black'))
+         .delay(duration).then(() => pulse(group, duration, color))
+}
+
 function getColor(color) {
   switch (color) {
     case 'default':
     case 'white': return { hue: 0, sat: 0, bri: 150 }
     case 'black': return { on: false }
-    case 'red': return { hue: 65000, sat: 255, bri: 150 }
-    case 'green': return { hue: 20000, sat: 255, bri: 150 }
+    case 'red': return { hue: 65000, sat: 255, bri: 250 }
+    case 'green': return { hue: 20000, sat: 255, bri: 250 }
+    case 'purple': return { hue: 50000, sat: 255, bri: 250 }
   }
 }
