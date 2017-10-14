@@ -32,11 +32,7 @@ const groups = {
     'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/3/state',
     'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/5/state',
     'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/1/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/3/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/2/state',
     'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/5/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/4/state',
-    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/1/state',
     'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/2/state',
     'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/1/state',
     'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/2/state',
@@ -70,18 +66,15 @@ const groups = {
   ]
 }
 
+const events = {};
+
 function playScene(scene) {
   const promise = new Promise.resolve()
-  const events = {};
 
   for (let delay in scene) {
     const event = scene[delay]
 
     for (let action of event.actions) {
-      if (action.name === 'kill') {
-        action.options.push(events)
-      }
-
       promise.delay(delay).then(() => {
         const actionPromise = getActionCall(action.name)(...action.options)
 
@@ -96,6 +89,7 @@ function playScene(scene) {
 
 function getActionCall(name) {
   switch (name) {
+    case 'blink': return blink
     case 'fade-color': return fadeColor
     case 'heartbeat': return heartbeat
     case 'kill': return kill
@@ -103,6 +97,7 @@ function getActionCall(name) {
     case 'lights-off': return lightsOff
     case 'play-sound': return playSound
     case 'pulse': return pulse
+    case 'random': return random
     default: throw `unknown action type "${name}"`
   }
 }
@@ -127,7 +122,7 @@ function heartbeat(group, color) {
          .delay(1000).then(() => heartbeat(group, color))
 }
 
-function kill(id, events) {
+function kill(id) {
   return new Promise((resolve) => {
     if (events[id]) {
       for(let promise of events[id]) promise.cancel()
@@ -169,10 +164,36 @@ function pulse(group, duration, color) {
          .delay(duration).then(() => pulse(group, duration, color))
 }
 
+function random(group, color) {
+  const colorJson = getColor(color);
+  const json = Object.assign({ on: true, transitiontime: 0 }, colorJson);
+  const uri = groups[group][Math.floor(Math.random() * groups[group].length)];
+
+  const promise = new Promise.resolve()
+  return promise.then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
+        .delay(100).then(() => request({ method: 'PUT', uri, json }))
+        .delay(100).then(() => random(group, color))
+}
+
+function blink(group, light, times, color) {
+  if (times === 0) {
+    return promise.resolve()
+  }
+
+  const colorJson = getColor(color);
+  const json = Object.assign({ on: true, transitiontime: 0 }, colorJson);
+  const uri = groups[light];
+
+  const promise = new Promise.resolve()
+  return promise.then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
+        .delay(100).then(() => request({ method: 'PUT', uri, json }))
+        .delay(100).then(() => blink(group, light, times--, color))
+}
+
 function getColor(color) {
   switch (color) {
     case 'default':
-    case 'white': return { hue: 0, sat: 0, bri: 150 }
+    case 'white': return { hue: 10000, sat: 50, bri: 150 }
     case 'black': return { on: false }
     case 'red': return { hue: 65000, sat: 255, bri: 250 }
     case 'green': return { hue: 20000, sat: 255, bri: 250 }
