@@ -50,12 +50,12 @@ window.onload = function () {
     },
     'yes': {
       0: {
-        actions: [{name: 'blink', options: ['living_room', 0, 2, 'green']}]
+        actions: [{name: 'blink', options: ['living_room', 0, 2, 'default']}]
       }
     },
     'no': {
       0: {
-        actions: [{name: 'blink', options: ['living_room', 0, 1, 'green']}]
+        actions: [{name: 'blink', options: ['living_room', 0, 1, 'default']}]
       }
     },
     'angry': {
@@ -63,17 +63,28 @@ window.onload = function () {
         id: 3,
         actions: [{name: 'random', options: ['living_room', 'red']}]
       },
-      2000: {
+      1000: {
         actions: [
           {name: 'kill', options: [3]},
+          {name: 'lights-off', options: ['living_room']}
+        ]
+      },
+      1001: {
+        actions: [
+          {name: 'fade-color', options: ['living_room', 10, 'red']}
+        ]
+      },
+      2000: {
+        actions: [
           {name: 'lights-off', options: ['living_room']}
         ]
       }
     },
     'purple-pulse': {
       0: {
-        id: 2,
+        id: 1,
         actions: [
+          {name: 'play-sound', options: ['purple_pulse.wav']},
           {name: 'pulse', options: ['all', 1500, 'purple']}
         ]
       }
@@ -81,7 +92,7 @@ window.onload = function () {
     "kill-purple": {
       0: {
         actions: [
-          {name: 'kill', options: [2]},
+          {name: 'kill', options: [1]},
           {name: 'lights-on', options: ['all', 10]}
         ]
       }
