@@ -7,19 +7,31 @@ window.onload = function () {
       0: { actions: [ {name: 'lights-on', options: ['all', 10]} ] }
     },
     'murder': {
+      // 0: {
+      //   actions: [{name: 'lights-off', options: ['all']}]
+      // },
       0: {
-        actions: [{name: 'lights-off', options: ['all']}]
-      },
-      3000: {
         id: 1,
         actions: [
           {name: 'play-sound', options: ['heartbeat.wav']},
-          {name: 'heartbeat', options: ['all', 'red']}
+          // {name: 'heartbeat', options: ['all', 'red']}
         ]
       },
-      20000: {
+      9000: {
+        id: 2,
+        actions: [
+          {name: 'play-sound', options: ['satanic_mill.wav']},
+        ]
+      },
+      12000: {
+        actions: [
+          {name: 'play-sound', options: ['scrape.wav']},
+        ]
+      },
+      23000: {
         actions: [
           {name: 'kill', options: [1]},
+          {name: 'kill', options: [2]},
           {name: 'lights-on', options: ['all']}
         ]
       }
