@@ -84,16 +84,41 @@ window.onload = function () {
       0: {
         id: 1,
         actions: [
-          {name: 'play-sound', options: ['purple_pulse.wav']},
           {name: 'pulse', options: ['all', 1500, 'purple']}
+        ]
+      },
+      1: {
+        id: 2,
+        actions: [
+          {name: 'play-sound', options: ['purple_pulse.wav']}
         ]
       }
     },
     "kill-purple": {
       0: {
         actions: [
+          {name: 'kill', options: [3]},
           {name: 'kill', options: [1]},
-          {name: 'lights-on', options: ['all', 10]}
+          {name: 'lights-off', options: ['all']}
+        ]
+      },
+      1000: {
+        actions: [
+          {name: 'fade-color', options: ['storage_room', 50, 'red']}
+        ]
+      },
+      6000: {
+        actions: [
+          {name: 'kill', options: [2]},
+          {name: 'lights-on', options: ['all']}
+        ]
+      }
+    },
+    "demonic": {
+      0: {
+        id: 3,
+        actions: [
+          {name: "play-sound", options: ['demonic.wav']}
         ]
       }
     }
