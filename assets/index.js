@@ -26,7 +26,7 @@ window.onload = function () {
         id: 3,
         actions: [
           {name: 'kill', options: [1]},
-          {name: 'lights-off', options: [1]},
+          {name: 'lights-off', options: ['all']},
           {name: 'play-sound', options: ['satanic_mill2.wav']},
         ]
       },
@@ -46,6 +46,16 @@ window.onload = function () {
           {name: 'kill', options: [3]},
           {name: 'lights-off', options: ['all']}
         ]
+      },
+      27000: {
+        actions: [
+          {name: 'lights-on', options: ['all']}
+        ]
+      }
+    },
+    'seance': {
+      0: {
+        actions: [{name: 'lights-off', options: ['living_room']}]
       }
     },
     'yes': {
