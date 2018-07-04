@@ -1,49 +1,71 @@
-function fadeColor(group, duration, color) {
+/**
+ * Fade a set of lights to a specific color
+ * @param {string[]} lights The set of lights
+ * @param {number} duration The duration of the fade
+ * @param {string} color The color to fade to
+ * @return {Promise}
+ */
+function fadeColor(lights, duration, color) {
   // return new Promise((resolve) => { console.log('fadeColor') })
   const colorJson = getColor(color);
   const json = Object.assign({ on: true, transitiontime: duration }, colorJson);
 
   const requests = []
-  for (let light of group) {
+  for (let light of lights) {
     requests.push(request({ method: 'PUT', uri: light, json }))
   }
 
   return Promise.all(requests);
 }
 
-function heartbeat(group, color) {
+/**
+ * Perform the heartbeat effect
+ * @param {string[]} lights The set of lights
+ * @param {string} color The color to use
+ * @return {Promise}
+ */
+function heartbeat(lights, color) {
   const promise = new Promise.resolve()
-  return promise.then(() => fadeColor(group, 0, color))
-         .delay(200).then(() => fadeColor(group, 1, 'black'))
-         .delay(1000).then(() => heartbeat(group, color))
+  return promise.then(() => fadeColor(lights, 0, color))
+         .delay(200).then(() => fadeColor(lights, 1, 'black'))
+         .delay(1000).then(() => heartbeat(lights, color))
 }
 
-function kill(id) {
-  return new Promise((resolve) => {
-    if (events[id]) {
-      for(let promise of events[id]) promise.cancel()
-    }
-    resolve()
-  })
+/**
+ * Turn a set of lights on
+ * @param {string[]} lights The set of lights
+ * @param {number} duration The length of fade
+ * @param {string} color The color to turn the lights to
+ * @return {Promise}
+ */
+function lightsOn(lights, duration = 0, color = 'default') {
+  // return new Promise((resolve) => { console.log('lightsOn', lights, duration, color); resolve() })
+  return fadeColor(lights, duration, color)
 }
 
-function lightsOn(group, duration = 0, color = 'default') {
-  // return new Promise((resolve) => { console.log('lightsOn', group, duration, color); resolve() })
-  return fadeColor(group, duration, color)
-}
-
-function lightsOff(group, duration = 0) {
-  // return new Promise((resolve) => { console.log('lightsOff', group, duration); resolve() })
+/**
+ * Turn a set of lights off
+ * @param {string[]} lights The set of lights
+ * @param {number} duration The length of fade
+ * @return {Promise}
+ */
+function lightsOff(lights, duration = 0) {
+  // return new Promise((resolve) => { console.log('lightsOff', lights, duration); resolve() })
   const json = { "on": false, "transitiontime": duration }
 
   const requests = []
-  for (let light of groups[group]) {
+  for (let light of lights) {
     requests.push(request({ method: 'PUT', uri: light, json }))
   }
 
   return Promise.all(requests)
 }
 
+/**
+ * Play a sound
+ * @param {string} file The name of the sound
+ * @return {Promise}
+ */
 function playSound(file) {
   // return new Promise((resolve) => { console.log('playSound', file); resolve() })
   return new Promise((resolve, error, onCancel) => {
@@ -52,43 +74,67 @@ function playSound(file) {
   })
 }
 
-function pulse(group, duration, color) {
+/**
+ * Pulse a set of lights
+ * @param {string[]} lights The set of lights
+ * @param {number} duration The length of the pulse
+ * @param {string} color The color to pulse the lights
+ * @return {Promise}
+ */
+function pulse(lights, duration, color) {
   const promise = new Promise.resolve()
-  return promise.then(() => fadeColor(group, duration / 100, color))
-         .delay(duration).then(() => fadeColor(group, duration / 100, 'black'))
-         .delay(duration).then(() => pulse(group, duration, color))
+  return promise.then(() => fadeColor(lights, duration / 100, color))
+         .delay(duration).then(() => fadeColor(lights, duration / 100, 'black'))
+         .delay(duration).then(() => pulse(lights, duration, color))
 }
 
-
-function random(group, color) {
+/**
+ * Randomly blink a set of lights
+ * @param {string[]} lights The set of lights
+ * @param {string} color The color to blink the lights
+ * @return {Promise}
+ */
+function random(lights, color) {
   const colorJson = getColor(color);
   const json = Object.assign({ on: true, transitiontime: 0 }, colorJson);
-  const uri = groups[group][Math.floor(Math.random() * groups[group].length)];
+  const light = lights[Math.floor(Math.random() * lights.length)];
 
   const promise = new Promise.resolve()
-  return promise.then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
-        .delay(50).then(() => request({ method: 'PUT', uri, json }))
-        .delay(50).then(() => random(group, color))
+  return promise.then(() => request({ method: 'PUT', light, json: { "on": false, transitiontime: 0 } }))
+        .delay(50).then(() => request({ method: 'PUT', light, json }))
+        .delay(50).then(() => random(lights, color))
 }
 
-function blink(group, light, times, color) {
-  if (times === 0) {
+/**
+ * Blink a single light
+ * @param {string} light The url of the light
+ * @param {number} times The number of times to blink the light
+ * @param {color} string The color to blink it
+ * @return Promise
+ */
+function blink(light, times, color) {
+  if (times <= 0) {
     return Promise.resolve()
   }
 
   const colorJson = getColor(color);
   const json = Object.assign({ on: true, transitiontime: 0 }, colorJson);
-  const uri = groups[group][light];
 
   const promise = new Promise.resolve()
-  return promise.then(() => request({ method: 'PUT', uri, json }))
-        .delay(150).then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
-        .delay(150).then(() => blink(group, light, times - 1, color))
+  return promise.then(() => request({ method: 'PUT', light, json }))
+        .delay(150).then(() => request({ method: 'PUT', light, json: { "on": false, transitiontime: 0 } }))
+        .delay(150).then(() => blink(light, times - 1, color))
 }
 
-function danceHall(group, duration) {
+/**
+ * Turn the lights of lights into a dance hall
+ * @param {string[]} lights A list of lights to affect
+ * @param {number} duration The length of time between changing light effect
+ * @return Promise
+ */
+function danceHall(lights, duration) {
   const promises = {};
-  for(let light of group) {
+  for(let light of lights) {
     setInterval(() => {
       if (promises[light]) promises[light].cancel();
       promises[light] = pulse([light], duration, randomColor())
@@ -96,11 +142,20 @@ function danceHall(group, duration) {
   }
 }
 
+/**
+ * Get a random color
+ * @return string
+ */
 function randomColor() {
   const colors = ["red", "green", "purple", "dim"];
   return colors[Math.floor(Math.random() * colors.length)];
 }
 
+/**
+ * Get the parameters for a color
+ * @param {string} color The name of the color
+ * @return {Object}
+ */
 function getColor(color) {
   switch (color) {
     case 'default':
@@ -121,5 +176,4 @@ exports.pulse = pulse;
 exports.playSound = playSound;
 exports.lightsOn = lightsOn;
 exports.lightsOff = lightsOff;
-exports.kill = kill;
 exports.heartbeat = heartbeat;
