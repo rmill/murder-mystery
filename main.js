@@ -2,19 +2,15 @@
 
 // Third party modules
 const bodyParser = require('body-parser')
-const player = require('play-sound')()
 const express = require('express')
-const request = require('request-promise')
-const Promise = require('bluebird')
 // Custom modules
 const actions = require('./js/actions')
+const discover = require('./js/discover')
 const { playScene } = require('./js/scene')
-const { getConfig, setConfig } = require('./js/config')
+const { createConfig, getConfig, saveConfig } = require('./js/config')
 
 var config = getConfig()
 const app = express()
-
-Promise.config({ cancellation: true })
 
 app.use(bodyParser.json())
 app.use(express.static('assets'))
@@ -25,15 +21,25 @@ app.get('/', (req, res) => {
 
 app.get('/config', (req, res) => {
   if (!config) {
-    res.sendStatus(404)
-    return
+    return res.sendStatus(404)
   }
 
   res.json(config)
 })
 
-app.post('/config', (req, res) => {
-  config = setConfig(req.body)
+app.post('/configure', (req, res) => {
+  discover().then((bridges) => {
+    config = createConfig(bridges)
+    saveConfig(config)
+    res.json(config)
+  }).catch(() => {
+    res.sendStatus(500)
+  });
+})
+
+app.post('/config/groups', (req, res) => {
+  config.groups = req.body
+  saveConfig(config)
   res.sendStatus(201)
 })
 

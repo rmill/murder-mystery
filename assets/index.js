@@ -1,4 +1,41 @@
-window.onload = function () {
+window.onload = () => {
+  getConfig();
+};
+
+function getConfig() {
+  $.ajax({
+    url: '/config',
+    type: "GET",
+    success: onConfigSuccess,
+    error: onConfigError,
+  });
+}
+
+function onConfigSuccess(config) {
+  for (var group in config.groups) {
+    $('body').append(`<div class="container"><button>${group}</button></div>`)
+  }
+};
+
+function onConfigError(error) {
+  if (error.status === 404) {
+    getLights();
+  } else {
+    console.log(error);
+  }
+};
+
+function getLights() {
+  $.ajax({
+    url: '/lights',
+    type: "GET",
+    success: onConfigSuccess,
+    error: onConfigError,
+  });
+}
+
+/**
+function () {
   events = {
     'lights-off': {
       0: { actions: [ {name: 'lights-off', options: ['all']} ] }
@@ -144,3 +181,4 @@ window.onload = function () {
     });
   });
 };
+*/

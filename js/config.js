@@ -11,18 +11,34 @@ function getConfig() {
   try {
     var configFile = fs.readFileSync(FILE_LOCATION, { encoding: 'utf-8' })
   } catch(err) {
-    console.log(err);
+    console.log(`Config file '${FILE_LOCATION}' not found`);
     return null
   }
 
   return JSON.parse(configFile)
 }
 
-function setConfig(configData) {
-  config = configData
-  fs.writeFileSync(FILE_LOCATION, JSON.stringify(configData))
-  return config
+function saveConfig(updatedConfig) {
+  config = updatedConfig
+  fs.writeFileSync(FILE_LOCATION, JSON.stringify(updatedConfig))
 }
 
+function createConfig(bridges) {
+  return {
+    bridges,
+    groups: {
+      all: [],
+      bedroom: [],
+      clue_room: [],
+      dance_hall: [],
+      hallway: [],
+      kitchen: [],
+      living_room: [],
+      study: []
+    }
+  }
+}
+
+exports.createConfig = createConfig
 exports.getConfig = getConfig
-exports.setConfig = setConfig
+exports.saveConfig = saveConfig

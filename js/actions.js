@@ -1,3 +1,9 @@
+const player = require('play-sound')()
+const request = require('request-promise')
+const Promise = require('bluebird')
+
+Promise.config({ cancellation: true })
+
 /**
  * Fade a set of lights to a specific color
  * @param {string[]} lights The set of lights
@@ -168,7 +174,6 @@ function getColor(color) {
   }
 }
 
-exports.randomColor = randomColor;
 exports.danceHall = danceHall;
 exports.blink = blink;
 exports.random = random;
