@@ -11,40 +11,27 @@ module.exports = () => {
 function processRequest(bridges) {
   var bridgePromises = [];
   bridges.forEach((bridge) => {
-    var promise = Promise.resolve()
-    .then(() => { bridge = processBridge(bridge) })
-    .then(() => getLights(bridge))
-    .then((lights) => processLights(lights, bridge))
-
+    var promise = getLights(bridge).then((lights) => processLights(lights, bridge))
     bridgePromises.push(promise)
   });
 
   return Promise.all(bridgePromises);
 }
 
-function processBridge(bridge) {
-  console.log('processBridge', bridge.id)
-  return {
-    id: bridge.id,
-    ip: bridge.internalipaddress,
-    user: null,
-    lights: null
-  }
-}
-
 function processLights(lights, bridge) {
-  console.log('processLights', lights)
-  bridge.lights = {}
+  var processedLights = {}
 
   for(var i in lights) {
-    bridge.lights[i] = { id: lights[i].uniqueid }
+    var light = lights[i]
+    var url = `http://${bridge.internalipaddress}/api/${bridge.user}/lights/${i}/state`
+    processedLights[light.uniqueid] = { id: light.uniqueid, url }
   }
 
-  return bridge
+  return processedLights
 }
 
 function processUser(user, bridge) {
-  console.log('processUser', bridge.id)
+  // console.log('processUser', bridge.id)
   return user[0].success.username
 }
 
@@ -53,20 +40,18 @@ function getBridges() {
 }
 
 function getLights(bridge) {
-  console.log('getLights', bridge.id)
   return makeHueRequest('GET', bridge, 'lights')
     .catch((err) => handleGetLightsError(err, bridge))
 }
 
 function createUser(bridge) {
-  console.log('createUser', bridge.id)
   var json = { 'devicetype': 'my_hue_app#webapp root' }
   return makeHueRequest('POST', bridge, '', json)
     .catch((err) => handleCreateUserError(err, bridge))
 }
 
 function makeHueRequest(method, bridge, resource = null, json = true) {
-  var uri = `http://${bridge.ip}/api`
+  var uri = `http://${bridge.internalipaddress}/api`
 
   if (resource) {
       uri += `/${bridge.user}/${resource}`
@@ -76,7 +61,6 @@ function makeHueRequest(method, bridge, resource = null, json = true) {
 
   return request(options)
     .then((res) => {
-      console.log(uri, res)
       if (isError(res)) {
         throwError(res)
       }

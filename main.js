@@ -28,19 +28,20 @@ app.get('/config', (req, res) => {
 })
 
 app.post('/configure', (req, res) => {
-  discover().then((bridges) => {
-    config = createConfig(bridges)
+  discover().then((lights) => {
+    config = createConfig(lights)
     saveConfig(config)
     res.json(config)
-  }).catch(() => {
+  }).catch((err) => {
+    console.log(err)
     res.sendStatus(500)
   });
 })
 
-app.post('/config/groups', (req, res) => {
+app.put('/config/groups', (req, res) => {
   config.groups = req.body
   saveConfig(config)
-  res.sendStatus(201)
+  res.send(config)
 })
 
 app.post('/scene', (req, res) => {

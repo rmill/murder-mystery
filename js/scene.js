@@ -1,19 +1,24 @@
-
+const Promise = require('bluebird')
+const actions = require('./actions')
+const { getConfig } = require('./config')
 const events = {}
 
 function playScene(scene) {
+  const config = getConfig()
+
   if (!config) {
     throw 'No config file found. Please add one first.';
   }
 
-  const promise = new Promise.resolve()
+  const promise = Promise.resolve()
 
   for (let delay in scene) {
     const event = scene[delay]
 
     for (let action of event.actions) {
       promise.delay(delay).then(() => {
-        const actionPromise = getActionCall(action.name)(...action.options)
+        action.options.lights = getLightsUrls(config, action.options.lights)
+        const actionPromise = getActionCall(action.name)(action.options)
 
         if (event.id !== undefined) {
           events[event.id] ? null : events[event.id] = []
@@ -22,6 +27,22 @@ function playScene(scene) {
       })
     }
   }
+}
+
+function getLightsUrls(config, lights) {
+  var lightsUrls = []
+  if (lights) {
+    lights.forEach((lightId) => {
+      var light = config.lights[lightId]
+      if (!light) {
+        console.log('Could not find light: ', lightId)
+        return
+      }
+      lightsUrls.push(light.url)
+    })
+  }
+
+  return lightsUrls
 }
 
 function getActionCall(name) {

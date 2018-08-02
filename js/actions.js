@@ -11,10 +11,9 @@ Promise.config({ cancellation: true })
  * @param {string} color The color to fade to
  * @return {Promise}
  */
-function fadeColor(lights, duration, color) {
-  // return new Promise((resolve) => { console.log('fadeColor') })
-  const colorJson = getColor(color);
-  const json = Object.assign({ on: true, transitiontime: duration }, colorJson);
+function fadeColor({lights, duration = 0, brightness = 254, color = 'on'}) {
+  const colorJson = getColor(color, brightness);
+  const json = Object.assign(colorJson, { transitiontime: duration });
 
   const requests = []
   for (let light of lights) {
@@ -33,7 +32,7 @@ function fadeColor(lights, duration, color) {
 function heartbeat(lights, color) {
   const promise = new Promise.resolve()
   return promise.then(() => fadeColor(lights, 0, color))
-         .delay(200).then(() => fadeColor(lights, 1, 'black'))
+         .delay(200).then(() => fadeColor(lights, 1, 'off'))
          .delay(1000).then(() => heartbeat(lights, color))
 }
 
@@ -45,7 +44,6 @@ function heartbeat(lights, color) {
  * @return {Promise}
  */
 function lightsOn(lights, duration = 0, color = 'default') {
-  // return new Promise((resolve) => { console.log('lightsOn', lights, duration, color); resolve() })
   return fadeColor(lights, duration, color)
 }
 
@@ -56,7 +54,6 @@ function lightsOn(lights, duration = 0, color = 'default') {
  * @return {Promise}
  */
 function lightsOff(lights, duration = 0) {
-  // return new Promise((resolve) => { console.log('lightsOff', lights, duration); resolve() })
   const json = { "on": false, "transitiontime": duration }
 
   const requests = []
@@ -73,7 +70,6 @@ function lightsOff(lights, duration = 0) {
  * @return {Promise}
  */
 function playSound(file) {
-  // return new Promise((resolve) => { console.log('playSound', file); resolve() })
   return new Promise((resolve, error, onCancel) => {
     const audio = player.play(__dirname + `/assets/${file}`, () => resolve())
     onCancel(() => audio.kill())
@@ -90,7 +86,7 @@ function playSound(file) {
 function pulse(lights, duration, color) {
   const promise = new Promise.resolve()
   return promise.then(() => fadeColor(lights, duration / 100, color))
-         .delay(duration).then(() => fadeColor(lights, duration / 100, 'black'))
+         .delay(duration).then(() => fadeColor(lights, duration / 100, 'off'))
          .delay(duration).then(() => pulse(lights, duration, color))
 }
 
@@ -112,24 +108,23 @@ function random(lights, color) {
 }
 
 /**
- * Blink a single light
- * @param {string} light The url of the light
+ * Blink the lights
+ * @param {string[]} lights The urls of the lights to blink
  * @param {number} times The number of times to blink the light
  * @param {color} string The color to blink it
  * @return Promise
  */
-function blink(light, times, color) {
+function blink({lights, times = 1, color = 'on'}) {
   if (times <= 0) {
     return Promise.resolve()
   }
 
-  const colorJson = getColor(color);
-  const json = Object.assign({ on: true, transitiontime: 0 }, colorJson);
+  times--
 
-  const promise = new Promise.resolve()
-  return promise.then(() => request({ method: 'PUT', light, json }))
-        .delay(150).then(() => request({ method: 'PUT', light, json: { "on": false, transitiontime: 0 } }))
-        .delay(150).then(() => blink(light, times - 1, color))
+  const colorJson = getColor(color)
+  return fadeColor({lights, color: 'off'})
+    .delay(250).then(() => fadeColor({lights, color}))
+    .delay(250).then(() => blink({lights, times, color}))
 }
 
 /**
@@ -160,25 +155,28 @@ function randomColor() {
 /**
  * Get the parameters for a color
  * @param {string} color The name of the color
+ * @param {number} bri The brightness
  * @return {Object}
  */
-function getColor(color) {
+function getColor(color, bri) {
   switch (color) {
     case 'default':
-    case 'white': return { hue: 10000, sat: 50, bri: 150 }
-    case 'dim': return { hue: 40000, sat: 200, bri: 150 }
+    case 'white': return { on: true, hue: 10000, sat: 254, bri }
+    case 'off':
     case 'black': return { on: false }
-    case 'red': return { hue: 65000, sat: 255, bri: 150 }
-    case 'green': return { hue: 20000, sat: 255, bri: 150 }
-    case 'purple': return { hue: 50000, sat: 255, bri: 150 }
+    case 'red': return { on: true, hue: 65000, sat: 254, bri }
+    case 'green': return { on: true, hue: 20000, sat: 254, bri }
+    case 'purple': return { on: true, hue: 50000, sat: 254, bri }
+    case 'on': return { on: true, bri }
   }
 }
 
-exports.danceHall = danceHall;
-exports.blink = blink;
-exports.random = random;
-exports.pulse = pulse;
-exports.playSound = playSound;
-exports.lightsOn = lightsOn;
-exports.lightsOff = lightsOff;
-exports.heartbeat = heartbeat;
+exports.fadeColor = fadeColor
+exports.danceHall = danceHall
+exports.blink = blink
+exports.random = random
+exports.pulse = pulse
+exports.playSound = playSound
+exports.lightsOn = lightsOn
+exports.lightsOff = lightsOff
+exports.heartbeat = heartbeat

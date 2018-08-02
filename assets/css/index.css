@@ -1,0 +1,34 @@
+html, body {
+  background-color: black;
+  text-align: center;
+  margin: 0;
+  padding: 10px;
+}
+
+button {
+  width: 100px;
+  height: 55px;
+  font-size: 15px;
+}
+
+.light {
+  border: 1px solid white;
+  padding: 43px;
+  margin-bottom: 10px;
+}
+
+.light.selected {
+  border-color: green
+}
+
+.light span {
+  color: white
+}
+
+.light select {
+  height: 56px
+}
+
+.brightness {
+  transform: rotateZ(270deg)
+}

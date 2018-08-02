@@ -23,11 +23,10 @@ function saveConfig(updatedConfig) {
   fs.writeFileSync(FILE_LOCATION, JSON.stringify(updatedConfig))
 }
 
-function createConfig(bridges) {
+function createConfig(lights) {
   return {
-    bridges,
+    lights: Object.assign({}, ...lights),
     groups: {
-      all: [],
       bedroom: [],
       clue_room: [],
       dance_hall: [],
