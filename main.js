@@ -27,42 +27,14 @@ app.listen(3000, () => {
 
 const groups = {
   all: [
-    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/4/state',
-    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/6/state',
-    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/3/state',
-    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/5/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/1/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/5/state',
-    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/2/state',
-    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/1/state',
-    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/2/state',
-    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/3/state'
-  ],
-  living_room: [
-    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/4/state',
-    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/6/state',
-    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/3/state'
-  ],
-  hallway: [
-    'http://192.168.0.38/api/EjvbqqttJW3PQ-REaCxk-m49GT1uQtbPdI19w78r/lights/5/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/1/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/5/state'
-  ],
-  party: [
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/2/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/3/state',
-    'http://192.168.0.136/api/G5T2UX0u3kFUNjlzNBDMsTQhmq7xhCklm7wj4odu/lights/4/state',
-    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/1/state'
-  ],
-  storage_room: [
-    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/2/state'
-  ],
-  kitchen: [
-    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/1/state',
-    'http://192.168.0.144/api/NoGjUV9s9G5Ku0ifnGB3WGgdKFTSSnEbr9MsVgs-z/lights/2/state'
-  ],
-  study: [
-    'http://192.168.0.203/api/KumTJJPCHNrw9PRhRemzY-TgWIVsGD-yRmWRkopd/lights/3/state'
+     "http://192.168.0.38/api/H-f1z0y9UnkCEbGW-1iWn3azeGNTe0sowTiGfo-g/lights/1/state",
+      "http://192.168.0.136/api/gF6zPvhMfk15HRpW0PqDNJxrJctLzZtNd7d0aHpi/lights/1/state",
+      "http://192.168.0.136/api/gF6zPvhMfk15HRpW0PqDNJxrJctLzZtNd7d0aHpi/lights/2/state",
+      "http://192.168.0.136/api/gF6zPvhMfk15HRpW0PqDNJxrJctLzZtNd7d0aHpi/lights/3/state",
+       "http://192.168.0.136/api/gF6zPvhMfk15HRpW0PqDNJxrJctLzZtNd7d0aHpi/lights/4/state",
+       "http://192.168.0.203/api/caI8n5uZ4Rm51CGSvjynKsGPpOPokCizD2r72kqX/lights/1/state",
+       "http://192.168.0.144/api/rPHTw33e7WNDmla44E0az0brAxTsxTZkZ87uOphN/lights/1/state",
+       "http://192.168.0.144/api/rPHTw33e7WNDmla44E0az0brAxTsxTZkZ87uOphN/lights/2/state"
   ]
 }
 
