@@ -131,6 +131,20 @@ window.onload = function () {
           {name: "play-sound", options: ['demonic.wav']}
         ]
       }
+    },
+    "play-music": {
+      0: {
+        actions: [
+          { name: "play-music", options: [] }
+        ]
+      }
+    },
+    "pause-music": {
+      0: {
+        actions: [
+          { name: "pause-music", options: [] }
+        ]
+      }
     }
   };
 

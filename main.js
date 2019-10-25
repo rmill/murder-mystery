@@ -7,13 +7,42 @@ const request = require('request-promise')
 const Promise = require ('bluebird')
 const app = express()
 
+let spotifyToken = null
+
 Promise.config({ cancellation: true })
 
 app.use(bodyParser.json());
 app.use(express.static('assets'))
 
+app.get('/login', (req, res) => {
+  var scopes = 'streaming';
+  res.redirect('https://accounts.spotify.com/authorize' +
+    '?response_type=code' +
+    '&client_id=' + 'db0357fd4b9343e2b1993845fd11055d' +
+    (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
+    '&redirect_uri=' + encodeURIComponent('http://localhost:3000/authorize'));
+})
+
+app.get('/authorize', (req, res) => {
+  let config = {
+    headers: { Authorization: 'Basic ZGIwMzU3ZmQ0YjkzNDNlMmIxOTkzODQ1ZmQxMTA1NWQ6ODY1YTEzOTU2NGVjNDVjODk5NTY4M2ZlNmJmOGYwYmU=' },
+    form: {
+      code: req.query.code,
+      grant_type: 'authorization_code',
+      redirect_uri: 'http://localhost:3000/authorize'
+    },
+    json: true,
+    url: 'https://accounts.spotify.com/api/token'
+  }
+
+  request.post(config, (err, httpResponse, body) => {
+    spotifyToken = body.access_token
+    res.redirect('/')
+  })
+})
+
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html')
+  spotifyToken ? res.sendFile(__dirname + '/index.html') : res.redirect('login')
 })
 
 app.post('/scene', (req, res) => {
@@ -70,6 +99,8 @@ function getActionCall(name) {
     case 'play-sound': return playSound
     case 'pulse': return pulse
     case 'random': return random
+    case 'pause-music': return pauseMusic
+    case 'play-music': return playMusic
     default: throw `unknown action type "${name}"`
   }
 }
@@ -159,6 +190,20 @@ function blink(group, light, times, color) {
   return promise.then(() => request({ method: 'PUT', uri, json }))
         .delay(150).then(() => request({ method: 'PUT', uri, json: { "on": false, transitiontime: 0 } }))
         .delay(150).then(() => blink(group, light, times - 1, color))
+}
+
+function pauseMusic() {
+  return request.put({
+    headers: { Authorization: 'Bearer ' + spotifyToken },
+    url: 'https://api.spotify.com/v1/me/player/pause'
+  })
+}
+
+function playMusic() {
+  return request.put({
+    headers: { Authorization: 'Bearer ' + spotifyToken },
+    url: 'https://api.spotify.com/v1/me/player/play'
+  })
 }
 
 function getColor(color) {
